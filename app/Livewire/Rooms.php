@@ -10,14 +10,20 @@ class Rooms extends Component
 {
     public $rooms;
 
-    public $room = null;
+    public $room;
     public $seatSelected = [];
+    #[Validate('required')]
     public $room_number = '';
-    public bool $roomEditing = false;
+    public $seats;
+    public bool $showModal = false;
+    public bool $editing = false;
+    public bool $adding = false;
 
     public function mount()
     {
         $this->rooms = Room::all();
+        $this->room = (object)[];
+        $this->seatSelected = [];
     }
 
     public function render()
@@ -25,7 +31,7 @@ class Rooms extends Component
         return view('livewire.rooms');
     }
 
-    public function setRoom($room_id)
+    public function showModalEdit($room_id)
     {
         $this->room = Room::find($room_id);
         $this->room_number = $this->room->room_number;
@@ -36,12 +42,19 @@ class Rooms extends Component
                 }
             }
         }
-        $this->roomEditing = true;
+        $this->showModal = true;
     }
 
-    public function closeRoomEditModal()
+    public function showModalAdd()
     {
-        $this->roomEditing = false;
+        $this->room = (object)[];
+        $this->room_number = '';
+    }
+
+    public function closeModal()
+    {
+
+        $this->showModal = false;
         $this->room = null;
         $this->seatSelected = [];
     }
@@ -53,22 +66,19 @@ class Rooms extends Component
 
     public function updateRoom()
     {
+        $this->validate();
         $seats = $this->room->seats;
-//        dd($seats['D']['D_01']['error']);
+
         foreach ($seats as $row) {
             foreach ($row as $key => $seat) {
-                if (!in_array($key, $this->seatSelected)){
-                    $seats[explode('_', $key)[0]][$key]['error'] = false;
-                }else{
-                    $seats[explode('_', $key)[0]][$key]['error'] = true;
-                }
+                $seats[explode('_', $key)[0]][$key]['error'] = in_array($key, $this->seatSelected);
             }
         }
         Room::where('id', $this->room->id)->update([
             'room_number' => $this->room_number,
             'seats' => $seats
         ]);
-        $this->closeRoomEditModal();
+        $this->closeModal();
         $this->rooms = Room::all();
     }
 }

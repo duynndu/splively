@@ -18,7 +18,6 @@
         </div>
         <!-- end page title -->
 
-        filter
         <div class="row">
             <div class="col-lg-12">
                 <div class="card" id="ticketsList">
@@ -128,7 +127,7 @@
                                                         </button>
                                                     </li>
                                                     <li>
-                                                        <a wire:click="setRoom({{$data->id}})"
+                                                        <a wire:click="showModalEdit({{$data->id}})"
                                                            class="dropdown-item edit-item-btn">
                                                             <i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
                                                             Edit</a></li>
@@ -206,7 +205,7 @@
             <!--end col-->
         </div>
         <!--end row-->
-        @if($roomEditing)
+        @if($showModal)
             <div class="modal fade zoomIn show" style="display: block" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-fullscreen">
                     <div class="modal-content border-0">
@@ -215,7 +214,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                     id="close-modal"></button>
                         </div>
-                        <form class="tablelist-form">
+                        <form wire:submit="updateRoom()" class="tablelist-form">
                             <div class="modal-body">
                                 <div class="row g-3">
                                     <div class="col-lg-12">
@@ -223,6 +222,9 @@
                                             <label for="room_number" class="form-label">Room number</label>
                                             <input type="text" id="room_number" class="form-control"
                                                    wire:model="room_number">
+                                            <div class="text-danger">
+                                                @error('room_number') {{$message}} @enderror
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <div class="st_seat_full_container bg-dark">
@@ -244,7 +246,7 @@
                                                                     @endif
                                                                     @foreach($seats as $seatNumber=>$seat)
                                                                         <li>
-                                                                            <input {{$seat['error'] ?'checked':''}} id="{{$seatNumber}}" type="checkbox"
+                                                                            <input id="{{$seatNumber}}" type="checkbox"
                                                                                    value="{{$seatNumber}}"
                                                                                    wire:model="seatSelected">
                                                                             <label for="{{$seatNumber}}"
@@ -264,11 +266,11 @@
                             </div>
                             <div class="modal-footer">
                                 <div class="hstack gap-2 justify-content-end">
-                                    <button wire:click="closeRoomEditModal()" type="button" class="btn btn-light"
+                                    <button wire:click="closeModal()" type="button" class="btn btn-light"
                                             data-bs-dismiss="modal">Close
                                     </button>
                                     <div wire:click="getSeatSelected()" class="btn btn-primary">check</div>
-                                    <button wire:click="updateRoom()" type="button" class="btn btn-success" id="add-btn">Edit room</button>
+                                    <button class="btn btn-success" id="add-btn">Edit room</button>
                                     <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
                                 </div>
                             </div>
