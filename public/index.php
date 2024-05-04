@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+require_once 'helpers.php';
 define('LARAVEL_START', microtime(true));
 
 // Determine if the application is in maintenance mode...

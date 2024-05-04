@@ -31,11 +31,25 @@
             <div id="two-column-menu">
             </div>
             <ul class="navbar-nav" id="navbar-nav">
-                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                <li class="menu-title"><span data-key="t-menu">Home</span></li>
                 <li class="nav-item">
                     <x-nav-link wire:navigate href="{{route('dashboard')}}" :active="request()->routeIs('dashboard')">
                         <i class="ri-dashboard-2-line"></i> <span>Dashboard</span>
                     </x-nav-link>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarApps" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="sidebarApps">
+                        <i class="ri-apps-2-line"></i> <span>Quản lý</span>
+                    </a>
+                    <div class="menu-dropdown collapse show" id="sidebarApps">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{route('rooms')}}" class="nav-link collapsed lh-1">
+                                    <i class="ri-tv-fill"></i><span>Cinema Room</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
             </ul>
         </div>

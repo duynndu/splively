@@ -914,18 +914,25 @@
 <script src="{{asset('assets/admin/assets/js/pages/plugins/lord-icon-2.1.0.js')}}"></script>
 <script src="{{asset('assets/admin/assets/js/plugins.js')}}"></script>
 
-<!-- apexcharts -->
-<script src="{{asset('assets/admin/assets/libs/apexcharts/apexcharts.min.js')}}"></script>
 
-<!-- Vector map-->
-<script src="{{asset('assets/admin/assets/libs/jsvectormap/js/jsvectormap.min.js')}}"></script>
-<script src="{{asset('assets/admin/assets/libs/jsvectormap/maps/world-merc.js')}}"></script>
+@switch(Route::current()->getName())
+    @case('dashboard')
+        <!-- apexcharts -->
+        <script src="{{asset('assets/admin/assets/libs/apexcharts/apexcharts.min.js')}}"></script>
 
-<!--Swiper slider js-->
-<script src="{{asset('assets/admin/assets/libs/swiper/swiper-bundle.min.js')}}"></script>
+        <!-- Vector map-->
+        <script src="{{asset('assets/admin/assets/libs/jsvectormap/js/jsvectormap.min.js')}}"></script>
+        <script src="{{asset('assets/admin/assets/libs/jsvectormap/maps/world-merc.js')}}"></script>
 
-<!-- Dashboard init -->
-<script defer src="{{asset('assets/admin/assets/js/pages/dashboard-ecommerce.init.js')}}"></script>
+        <!--Swiper slider js-->
+        <script src="{{asset('assets/admin/assets/libs/swiper/swiper-bundle.min.js')}}"></script>
+
+        <!-- Dashboard init -->
+        <script defer src="{{asset('assets/admin/assets/js/pages/dashboard-ecommerce.init.js')}}"></script>
+    @break
+    @case('rooms')
+    @break
+@endswitch
 
 <!-- App js -->
 <script src="{{asset('assets/admin/assets/js/app.js')}}"></script>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Livewire\Dashboard;
+use App\Livewire\Rooms;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -15,6 +16,7 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified', 'check-role:admin'])->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('', Dashboard::class)->name('dashboard');
+        Route::get('rooms', Rooms::class)->name('rooms');
     });
 });
 
