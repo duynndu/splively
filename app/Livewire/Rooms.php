@@ -66,6 +66,7 @@ class Rooms extends Component
 
     public function updateRoom()
     {
+        dd($this->room_number);
         $this->validate();
         $seats = $this->room->seats;
 

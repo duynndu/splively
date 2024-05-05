@@ -48,6 +48,11 @@
                                     <i class="ri-tv-fill"></i><span>Cinema Room</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{route('films')}}" class="nav-link collapsed lh-1">
+                                    <i class="bx bx-film"></i><span>Films</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>

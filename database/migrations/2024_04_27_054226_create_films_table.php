@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description');
+            $table->string('duration');
             $table->timestamp('release_date');
+            $table->json('images');
+            $table->string('trailer');
             $table->string('genre');
             $table->timestamps();
         });
