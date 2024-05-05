@@ -114,5 +114,11 @@ class Room extends Model
             }
         }'
     ];
+    protected $fillable = ['room_number', 'seats'];
     use HasFactory;
+
+    public function scopeSearch($query, $search): void
+    {
+        $query->where('room_number', 'like', "%{$search}%");
+    }
 }
