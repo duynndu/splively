@@ -28,6 +28,7 @@
     <link href="{{asset('assets/admin/assets/css/app.min.css')}}" rel="stylesheet" type="text/css"/>
     <!-- custom Css-->
     <link href="{{asset('assets/admin/assets/css/custom.min.css')}}" rel="stylesheet" type="text/css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 </head>

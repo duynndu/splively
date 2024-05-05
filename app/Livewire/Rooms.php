@@ -3,38 +3,52 @@
 namespace App\Livewire;
 
 use App\Models\Room;
+use Illuminate\Support\Facades\File;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Rooms extends Component
 {
-    public $rooms;
+    use WithPagination;
 
-    public $room;
-    public $seatSelected = [];
+    public int $perPage = 2;
+    public string $search = '';
+    public Room|null $room;
     #[Validate('required')]
-    public $room_number = '';
-    public $seats;
-    public bool $showModal = false;
+    public string $room_number = '';
+    public array $seats;
+
+    public bool $deleting = false;
+    public bool $deletingSelected = false;
     public bool $editing = false;
     public bool $adding = false;
 
+    public bool $selectAll = false;
+    public array $seatSelected = [];
+    public array $roomSelected = [];
+
+
     public function mount()
     {
-        $this->rooms = Room::all();
-        $this->room = (object)[];
         $this->seatSelected = [];
     }
 
     public function render()
     {
-        return view('livewire.rooms');
+        $rooms = Room::search($this->search)->paginate($this->perPage);
+        return view('livewire.rooms', [
+            'rooms' => $rooms
+        ]);
     }
 
     public function showModalEdit($room_id)
     {
+        $this->closeModal();
+        $this->editing = true;
         $this->room = Room::find($room_id);
         $this->room_number = $this->room->room_number;
+        $this->seats = json_decode(File::get('data/seats.json'), true);
         foreach ($this->room->seats as $row) {
             foreach ($row as $key => $seat) {
                 if ($seat['error']) {
@@ -42,44 +56,111 @@ class Rooms extends Component
                 }
             }
         }
-        $this->showModal = true;
     }
 
     public function showModalAdd()
     {
-        $this->room = (object)[];
+        $this->closeModal();
+        $this->adding = true;
         $this->room_number = '';
+        $this->seats = json_decode(File::get('data/seats.json'), true);
     }
 
     public function closeModal()
     {
-
-        $this->showModal = false;
+        $this->adding = false;
+        $this->editing = false;
+        $this->deleting = false;
+        $this->deletingSelected = false;
         $this->room = null;
         $this->seatSelected = [];
+        $this->roomSelected = [];
     }
 
-    public function getSeatSelected()
+    public function submitForm()
     {
-        dd($this->seatSelected);
+        if ($this->editing) {
+            $this->updateRoom();
+        }
+        if ($this->adding) {
+            $this->addRoom();
+        }
+        if ($this->deleting) {
+            $this->deleteRoom();
+        }
+        if ($this->deletingSelected) {
+            $this->deleteRoomSelect();
+        }
+        $this->closeModal();
+//        $this->rooms = Room::all();
+    }
+
+    public function addRoom()
+    {
+        $this->validate();
+        foreach ($this->seatSelected as $seat) {
+            $this->seats[explode('_', $seat)[0]][$seat]['error'] = true;
+        }
+
+        Room::create([
+            'room_number' => $this->room_number,
+            'seats' => $this->seats
+        ]);
     }
 
     public function updateRoom()
     {
-        dd($this->room_number);
-        $this->validate();
-        $seats = $this->room->seats;
 
-        foreach ($seats as $row) {
-            foreach ($row as $key => $seat) {
-                $seats[explode('_', $key)[0]][$key]['error'] = in_array($key, $this->seatSelected);
-            }
+        foreach ($this->seatSelected as $seat) {
+            $this->seats[explode('_', $seat)[0]][$seat]['error'] = true;
         }
         Room::where('id', $this->room->id)->update([
             'room_number' => $this->room_number,
-            'seats' => $seats
+            'seats' => $this->seats
         ]);
-        $this->closeModal();
-        $this->rooms = Room::all();
+    }
+
+    public function deleteRoom(): void
+    {
+        $this->room->delete();
+    }
+
+    public function deleteRoomSelect(): void
+    {
+        if (count($this->roomSelected) > 0) {
+            Room::whereIn('id', $this->roomSelected)->delete();
+        }
+    }
+
+    public function showModalDelete(Room|null $room = null)
+    {
+        if ($room->id == null) {
+            $this->deletingSelected = true;
+        } else {
+            $this->deleting = true;
+            $this->room = $room;
+        }
+    }
+
+    // debug fn
+    public function getSeatSelected()
+    {
+//        dd($this->seatSelected);
+    }
+
+    public function getRoomSelected()
+    {
+        dd($this->roomSelected);
+    }
+
+    public function updateSelectAll($roomIds)
+    {
+        $roomIds =array_map(fn($roomId)=>strval($roomId), $roomIds);
+        if($this->selectAll) {
+            $this->roomSelected = $roomIds;
+        }else {
+            $this->roomSelected = [];
+        }
+
     }
 }
