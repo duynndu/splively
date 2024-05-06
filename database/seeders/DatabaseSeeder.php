@@ -17,11 +17,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-//        User::factory()->create([
-//            'name' => 'Test User',
-//            'email' => 'test@example.com',
-//        ]);
-        Room::factory(20)->create();
-        Film::factory(2)->create();
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'duynnz@gmail.com',
+            'password'=> bcrypt('11111111'),
+            'role' => 'admin'
+        ]);
+        Room::factory(10)->create();
+        Film::factory(10)->create();
     }
 }

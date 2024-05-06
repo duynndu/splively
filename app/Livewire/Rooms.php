@@ -30,6 +30,15 @@ class Rooms extends Component
     public array $seatSelected = [];
     public array $roomSelected = [];
 
+    public string $sortField = 'id';
+    public string $sortDirection = 'asc';
+
+    public function sortBy($sortField): void
+    {
+        $this->sortField = $sortField;
+        $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+    }
+
     public function mount()
     {
         $this->seatSelected = [];
@@ -62,6 +71,7 @@ class Rooms extends Component
                     $query->whereBetween('created_at', convertDateRange($this->dateRange));
                 }
             })
+            ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
     }
 

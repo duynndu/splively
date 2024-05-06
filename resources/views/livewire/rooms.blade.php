@@ -67,16 +67,24 @@
                             <table class="table align-middle table-nowrap mb-0" id="ticketTable">
                                 <thead>
                                 <tr>
-                                    <th scope="col" style="width: 40px;">
+                                    <th>
                                         <div class="form-check">
                                             <input wire:model="selectAll" class="form-check-input selectedAll"
                                                    type="checkbox">
                                         </div>
                                     </th>
-                                    <th class="sort">ID</th>
-                                    <th class="sort">Room number</th>
-                                    <th class="sort">Created at</th>
-                                    <th class="sort">Action</th>
+{{--                                    public function sortBy($sortField): void--}}
+{{--                                    {--}}
+{{--                                        $this->sortField = $sortField;--}}
+{{--                                        $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';--}}
+{{--                                    }--}}
+{{--                                    để dùng x-table.heading phải định nghĩa hàm tren ở trong class component--}}
+{{--                                    :direction dùng  để truyền vào trạng thái sap xep asc hoặc desc--}}
+                                    <x-table.heading :sortBy="'id'" :direction="$sortDirection">ID</x-table.heading>
+                                    <x-table.heading :sortBy="'room_number'" :direction="$sortDirection">Room number</x-table.heading>
+                                    <x-table.heading :sortBy="'created_at'" :direction="$sortDirection">Created at</x-table.heading>
+
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody class="list form-check-all" id="ticket-list-data">
@@ -88,12 +96,9 @@
                                                        type="checkbox" value="{{$data->id}}">
                                             </div>
                                         </th>
-                                        <td>
-                                            <a href="javascript:void(0);"
-                                               class="fw-medium link-primary ticket-id">{{$data->id}}</a>
-                                        </td>
-                                        <td class="tasks_name">{{$data->room_number}}</td>
-                                        <td class="tasks_name">{{$data->created_at}}</td>
+                                        <td>{{$data->id}}</td>
+                                        <td>{{$data->room_number}}</td>
+                                        <td>{{$data->created_at}}</td>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
@@ -151,47 +156,11 @@
                             </div>
                             <div wire:click="getRoomSelected()" class="btn btn-primary">check</div>
                         </div>
-                        <!-- Modal -->
-                        @if($deleting || $deletingSelected)
-                            <div class="modal fade flip show d-block">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-body p-5 text-center">
-                                            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
-                                                       colors="primary:#405189,secondary:#f06548"
-                                                       style="width:90px;height:90px"></lord-icon>
-                                            <div class="mt-4 text-center">
-                                                <h4>You are about to delete a order ?</h4>
-                                                <p class="text-muted fs-14 mb-4">Deleting your order will remove all of
-                                                    your
-                                                    information from our database.</p>
-                                                <div class="hstack gap-2 justify-content-center remove">
-                                                    <button wire:click="closeModal()"
-                                                            class="btn btn-link link-success fw-medium text-decoration-none"
-                                                            id="deleteRecord-close" data-bs-dismiss="modal"><i
-                                                            class="ri-close-line me-1 align-middle"></i> Close
-                                                    </button>
-                                                    <button wire:click="submitForm()" class="btn btn-danger"
-                                                            id="delete-record">Yes, Delete It
-                                                    </button>
-                                                    <div wire:click="getRoomSelected()" class="btn btn-primary">check
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                        <!--end modal -->
                     </div>
                     <!--end card-body-->
                 </div>
-                <!--end card-->
             </div>
-            <!--end col-->
         </div>
-        <!--end row-->
         @if($editing || $adding)
             <div class="modal fade zoomIn show d-block" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-fullscreen">
@@ -262,6 +231,39 @@
                 </div>
             </div>
         @endif
+        <!-- Modal -->
+        @if($deleting || $deletingSelected)
+            <div class="modal fade flip show d-block">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body p-5 text-center">
+                            <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop"
+                                       colors="primary:#405189,secondary:#f06548"
+                                       style="width:90px;height:90px"></lord-icon>
+                            <div class="mt-4 text-center">
+                                <h4>You are about to delete a order ?</h4>
+                                <p class="text-muted fs-14 mb-4">Deleting your order will remove all of
+                                    your
+                                    information from our database.</p>
+                                <div class="hstack gap-2 justify-content-center remove">
+                                    <button wire:click="closeModal()"
+                                            class="btn btn-link link-success fw-medium text-decoration-none"
+                                            id="deleteRecord-close" data-bs-dismiss="modal"><i
+                                            class="ri-close-line me-1 align-middle"></i> Close
+                                    </button>
+                                    <button wire:click="submitForm()" class="btn btn-danger"
+                                            id="delete-record">Yes, Delete It
+                                    </button>
+                                    <div wire:click="getRoomSelected()" class="btn btn-primary">check
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+        <!--end modal -->
         @script
         <script>
             document.addEventListener('updatePage', () => {
