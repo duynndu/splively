@@ -4,13 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Film extends Model
 {
     use HasFactory;
-    public function screenings(): HasMany
-    {
-        return $this->hasMany(Screening::class);
-    }
+    protected $table = 'films';
+    protected $casts = [
+        'images' => 'array'
+    ];
+    protected $attributes = [
+        'images' => '{
+            "cover": "cover.jpg",
+            "gallery": [
+                "image1.jpg",
+                "image2.jpg",
+                "image3.jpg"
+            ]
+        }'
+    ];
+    use HasFactory;
 }

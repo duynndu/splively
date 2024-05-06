@@ -2,11 +2,11 @@
 
 use App\Livewire\Dashboard;
 use App\Livewire\Rooms;
+use App\Livewire\Films;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FilmController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
-
 
 Route::get('/', [HomeController::class, 'index']);
 Route::prefix('film')->group(function () {
@@ -26,6 +26,7 @@ Route::middleware(['auth', 'verified', 'check-role:admin'])->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('', Dashboard::class)->name('dashboard');
         Route::get('rooms', Rooms::class)->name('rooms');
+        Route::get('films', Films::class)->name('films');
     });
 });
 

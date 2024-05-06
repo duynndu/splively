@@ -133,6 +133,7 @@ class Rooms extends Component
 
     public function updateRoom()
     {
+
         foreach ($this->seatSelected as $seat) {
             $this->seats[explode('_', $seat)[0]][$seat]['error'] = true;
         }
