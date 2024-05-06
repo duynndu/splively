@@ -17,7 +17,8 @@ class RoomFactory extends Factory
     public function definition(): array
     {
         return [
-            'room_number' => fake()->postcode()
+            'room_number' => 'A' . rand(1, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9),
+            'created_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }

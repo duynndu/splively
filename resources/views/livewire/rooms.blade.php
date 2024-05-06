@@ -47,7 +47,8 @@
                             <!--end col-->
 
                             <div class="col-xxl-3 col-sm-4">
-                                <input type="text" class="form-control bg-light border-light"
+                                <input x-on:input="$wire.setDateRange($event.target.value)" type="text"
+                                       class="form-control bg-light border-light"
                                        data-provider="flatpickr" data-date-format="d M, Y" data-range-date="true"
                                        id="demo-datepicker" placeholder="Select date range">
                             </div>
@@ -68,13 +69,14 @@
                                 <tr>
                                     <th scope="col" style="width: 40px;">
                                         <div class="form-check">
-                                            <input x-on:change="$wire.updateSelectAll({{$rooms->pluck('id')}})" wire:model="selectAll" class="form-check-input selectedAll" type="checkbox" value="checkAll">
+                                            <input wire:model="selectAll" class="form-check-input selectedAll"
+                                                   type="checkbox">
                                         </div>
                                     </th>
-                                    <th class="sort desc" data-sort="id">ID</th>
-                                    <th class="sort" data-sort="tasks_name">Room number</th>
-                                    <th class="sort" data-sort="tasks_name">Created at</th>
-                                    <th class="sort" data-sort="client_name">Action</th>
+                                    <th class="sort">ID</th>
+                                    <th class="sort">Room number</th>
+                                    <th class="sort">Created at</th>
+                                    <th class="sort">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody class="list form-check-all" id="ticket-list-data">
@@ -165,13 +167,15 @@
                                                     information from our database.</p>
                                                 <div class="hstack gap-2 justify-content-center remove">
                                                     <button wire:click="closeModal()"
-                                                        class="btn btn-link link-success fw-medium text-decoration-none"
-                                                        id="deleteRecord-close" data-bs-dismiss="modal"><i
+                                                            class="btn btn-link link-success fw-medium text-decoration-none"
+                                                            id="deleteRecord-close" data-bs-dismiss="modal"><i
                                                             class="ri-close-line me-1 align-middle"></i> Close
                                                     </button>
-                                                    <button wire:click="submitForm()" class="btn btn-danger" id="delete-record">Yes, Delete It
+                                                    <button wire:click="submitForm()" class="btn btn-danger"
+                                                            id="delete-record">Yes, Delete It
                                                     </button>
-                                                    <div wire:click="getRoomSelected()" class="btn btn-primary">check</div>
+                                                    <div wire:click="getRoomSelected()" class="btn btn-primary">check
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -260,12 +264,15 @@
         @endif
         @script
         <script>
-            console.log(Livewire)
-            $(document).ready(function () {
-                $('.selectedAll').click(function () {
-                    $('.selectedItem').prop('checked', this.checked);
-                })
+            document.addEventListener('updatePage', () => {
+                $('.selectedAll').prop('checked', false)
             })
+            $('.selectedAll').click(function () {
+                $('.selectedItem').prop('checked', this.checked);
+            })
+            $(document).on('click', '.selectedItem', function () {
+                $('.selectedAll').prop('checked', $('.selectedItem:checked').length === $('.selectedItem').length);
+            });
         </script>
         @endscript
     </div>

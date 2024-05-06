@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Room;
 use Illuminate\Support\Facades\File;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -14,6 +15,7 @@ class Rooms extends Component
 
     public int $perPage = 2;
     public string $search = '';
+    public $dateRange;
     public Room|null $room;
     #[Validate('required')]
     public string $room_number = '';
@@ -28,18 +30,39 @@ class Rooms extends Component
     public array $seatSelected = [];
     public array $roomSelected = [];
 
-
     public function mount()
     {
         $this->seatSelected = [];
     }
 
+    public function setDateRange($dateRange)
+    {
+        $this->dateRange = $dateRange;
+    }
+
+    public function updatedPage($page)
+    {
+        $this->roomSelected = [];
+        $this->selectAll = false;
+        $this->dispatch('updatePage');
+    }
+
     public function render()
     {
-        $rooms = Room::search($this->search)->paginate($this->perPage);
         return view('livewire.rooms', [
-            'rooms' => $rooms
+            'rooms' => $this->getRoomPaginate()
         ]);
+    }
+
+    public function getRoomPaginate()
+    {
+        return Room::search($this->search)
+            ->when($this->dateRange, function ($query) {
+                if (str_contains($this->dateRange, ' to ')) {
+                    $query->whereBetween('created_at', convertDateRange($this->dateRange));
+                }
+            })
+            ->paginate($this->perPage);
     }
 
     public function showModalEdit($room_id)
@@ -149,17 +172,16 @@ class Rooms extends Component
 
     public function getRoomSelected()
     {
-        dd($this->roomSelected);
+        dd($this->selectAll, $this->roomSelected);
     }
 
-    public function updateSelectAll($roomIds)
+    public function updatedSelectAll($selectAll): void
     {
-        $roomIds =array_map(fn($roomId)=>strval($roomId), $roomIds);
-        if($this->selectAll) {
+        if ($selectAll) {
+            $roomIds = array_map(fn($roomId) => strval($roomId), $this->getRoomPaginate()->pluck('id')->toArray());
             $this->roomSelected = $roomIds;
-        }else {
+        } else {
             $this->roomSelected = [];
         }
-
     }
 }
