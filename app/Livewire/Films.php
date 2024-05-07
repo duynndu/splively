@@ -3,87 +3,172 @@
 namespace App\Livewire;
 
 use App\Models\Film;
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Validate;
+use Livewire\Component;
+use Livewire\WithPagination;
+
 
 class Films extends Component
 {
     use WithFileUploads;
-    public $films;
-    public $film;
+    use WithPagination;
+
+    public int $perPage = 2;
+    public string $search = '';
+    public $dateRange;
+    public Film|null $film;
     public $images = [];
-    public $value = [];
+    public $name = " ";
     public $title = " ";
     public $duration = " ";
+    public $description = " ";
     public $trailer = " ";
     public $genre = " ";
     public $condition1 = false;
     public $condition2 = false;
-    public $description = "";
+    public bool $selectAll = false;
+
     public $release_date = " ";
-    public $file;
+    public $file = [];
     public $showModal = false;
     public $editting = false;
+    public $adding = false;
+    public $deleting = false;
+    public $deletingSelected = false;
+    
+
+    public string $sortField = 'id';
+    public string $sortDirection = 'asc';
+    public array $filmSelected = [];
+
 
     public function mount()
     {
-        $this->films = Film::all();
-        $this->film = (object)[];
+        // $this->films = Film::all();
         // dd($this->films);
     }
     public function render()
     {
-        return view('livewire.films');
+        // dd($this->getFilmPaginate());
+        return view('livewire.films', [
+            'films' => $this->getFilmPaginate()
+        ]);
+    }
+    public function closeModal()
+    {
+        $this->adding = false;
+        $this->editting = false;
+        $this->deleting = false;
+        $this->deletingSelected = false;
+        $this->filmSelected = [];
+        $this->film = null;
+    }
+    public function submitForm()
+    {
+        // dd(1);
+        if ($this->editting) {
+            $this->updateFilm();
+        }
+        if ($this->adding) {
+            $this->insertFilm();
+        }
+        if ($this->deleting) {
+            $this->deleteFilm();
+        }
+        if ($this->deletingSelected) {
+            $this->deleteFilmSelect();
+        }
+        $this->closeModal();
+    }
+    public function updatedPage($page)
+    {
+        $this->filmSelected = [];
+        $this->selectAll = false;
+        $this->dispatch('updatePage');
+    }
+    public function sortBy($sortField): void
+    {
+        $this->sortField = $sortField;
+        $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+    }
+    public function setDateRange($dateRange)
+    {
+        $this->dateRange = $dateRange;
+    }
+
+    public function getFilmPaginate()
+    {
+        return Film::search($this->search)
+            ->when($this->dateRange, function ($query) {
+                if (str_contains($this->dateRange, ' to ')) {
+                    $query->whereBetween('created_at', convertDateRange($this->dateRange));
+                }
+            })
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate($this->perPage);
     }
 
     public function showModalInsert()
     {
-        $this->showModal = true;
+        $this->closeModal();
+        $this->adding = true;
     }
 
     public function showModalEdit($id_film)
     {
         // dd($this->showModalEdit);
+        $this->closeModal();
+        $this->editting = true;
         $this->film = Film::find($id_film);
+        $this->name = $this->film->name;
         $this->title = $this->film->title;
         $this->duration = $this->film->duration;
         $this->trailer = $this->film->trailer;
         $this->genre = $this->film->genre;
         $this->description = $this->film->description;
         $this->release_date = $this->film->release_date;
-        $this->editting = true;
     }
 
-    public function closeModalInsert()
-    {
-        $this->showModal = false;
-    }
+   
     public function checkFilm()
     {
-        dd('?????????');
+        dd(Str::slug($this->title));
     }
 
     public function insertFilm()
     {
+        $this->validate([
+            'name' => 'required',
+            'title' => 'required',
+            'description' => 'required',
+            'duration' => 'required',
+            'release_date' => 'required',
+            'images.cover' => 'required',
+            'images.gallery' => 'required',
+            'trailer' => 'required',
+            'genre' => 'required',
+        ]);
         $film = new Film();
-        $hehe = $this->value;
         if ($this->images['cover']) {
             $path = $this->images['cover']->store('uploads', 'public');
-            $hehe['images']['cover'] = Storage::url($path);
+            $this->file['cover'] = Storage::url($path);
         }
         if ($this->images['gallery']) {
             foreach ($this->images['gallery'] as $key => $value) {
                 $path = $this->images['gallery'][$key]->store('uploads', 'public');
-                $hehe['images']['gallery'][$key] = Storage::url($path);
+                $this->file['gallery'][$key] = Storage::url($path);
             }
         }
+        $film->name = $this->name;
         $film->title = $this->title;
         $film->description = $this->description;
         $film->release_date = $this->release_date;
         $film->trailer = $this->trailer;
-        $film->images = $hehe['images'];
+        $film->images = $this->file;
         $film->duration = $this->duration;
         $film->genre = $this->genre;
         $film->save();
@@ -91,10 +176,17 @@ class Films extends Component
 
     public function updateFilm()
     {
-        
-        // dd(public_path($this->film->images['cover']));
+        // dd($this->title);
+        $this->validate([
+            'name' => 'required',
+            'title' => 'required',
+            'description' => 'required',
+            'duration' => 'required',
+            'release_date' => 'required',
+            'trailer' => 'required',
+            'genre' => 'required',
+        ]);
 
-        // $condition2 = false;
         if (!$this->images) {
             $this->condition1 = false;
             $this->condition2 = false;
@@ -106,7 +198,7 @@ class Films extends Component
                     unlink(public_path($this->film->images['cover']));
                 }
                 $path = $this->images['cover']->store('uploads', 'public');
-                $this->value['images']['cover'] = Storage::url($path);
+                $this->file['cover'] = Storage::url($path);
                 $this->condition1 = true;
             }
             if (isset($this->images['gallery'])) {
@@ -117,7 +209,7 @@ class Films extends Component
                 }
                 foreach ($this->images['gallery'] as $key => $value) {
                         $path = $this->images['gallery'][$key]->store('uploads', 'public');
-                        $this->value['images']['gallery'][$key] = Storage::url($path);
+                        $this->file['gallery'][$key] = Storage::url($path);
                 }
                 $this->condition2 = true;
             }
@@ -127,14 +219,15 @@ class Films extends Component
         Film::where('id', $this->film->id)
                 ->when($this->condition1, function ($query) {
                     $query->update([
-                        'images->cover' => $this->value['images']['cover'],
+                        'images->cover' => $this->file['cover'],
                     ]);
                 })
                 ->when($this->condition2, function ($query) {
                     $query->update([
-                        'images->gallery' => $this->value['images']['gallery'],
+                        'images->gallery' => $this->file['gallery'],
                     ]);
                 })->update([
+                    'name' => $this->name,
                     'title' => $this->title,
                     'description'=>$this->description,
                     'release_date'=>$this->release_date,
@@ -143,9 +236,18 @@ class Films extends Component
                     'genre'=>$this->genre
                 ]);
     }
+    public function updatedSelectAll($selectAll): void
+    {
+        if ($selectAll) {
+            $filmIds = array_map(fn($filmId) => strval($filmId), $this->getFilmPaginate()->pluck('id')->toArray());
+            $this->filmSelected = $filmIds;
+        } else {
+            $this->filmSelected = [];
+        }
+    }
+    public function deleteFilm(){
+        // dd($this->film);
 
-    public function deleteFilm($id_film){
-        $this->film = Film::find($id_film);
         if (File::exists(public_path($this->film->images['cover']))) {
             unlink(public_path($this->film->images['cover']));
         }
@@ -154,6 +256,25 @@ class Films extends Component
                 unlink(public_path($value));
             }
         }
-        Film::find($id_film)->delete();
+        $this->film->delete();
+    }
+    public function deleteFilmSelect(): void
+    {
+        if (count($this->filmSelected) > 0) {
+            Film::whereIn('id', $this->filmSelected)->delete();
+        }
+    }
+    public function getFilmSelected()
+    {
+        dd($this->selectAll, $this->filmSelected);
+    }
+    public function showModalDelete(Film|null $film = null)
+    {
+        if ($film->id == null) {
+            $this->deletingSelected = true;
+        } else {
+            $this->deleting = true;
+            $this->film = $film;
+        }
     }
 }

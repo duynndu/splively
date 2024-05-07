@@ -3,12 +3,14 @@
 use App\Livewire\Dashboard;
 use App\Livewire\Rooms;
 use App\Livewire\Films;
+
+use App\Livewire\Genres;                                                                                                                                        
 use App\Livewire\Screenings;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FilmController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
-
 Route::get('/', [HomeController::class, 'index']);
 Route::prefix('film')->group(function () {
     Route::get('/', [FilmController::class, 'films']);
@@ -28,6 +30,7 @@ Route::middleware(['auth', 'verified', 'check-role:admin'])->group(function () {
         Route::get('', Dashboard::class)->name('dashboard');
         Route::get('rooms', Rooms::class)->name('rooms');
         Route::get('films', Films::class)->name('films');
+        Route::get('genres', Genres::class)->name('films');
         Route::get('screenings', Screenings::class)->name('screenings');
     });
 });
