@@ -20,7 +20,6 @@ return new class extends Migration
             $table->timestamp('release_date');
             $table->json('images');
             $table->string('trailer');
-
             $table->timestamps();
         });
     }

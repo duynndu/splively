@@ -26,7 +26,6 @@ class DatabaseSeeder extends Seeder
             'password'=> bcrypt('11111111'),
             'role' => 'admin'
         ]);
-        Genres::factory(10)->create();
         Room::factory(10)->create();
         Genre::factory(10)->create();
         Film::factory(10)->create();
