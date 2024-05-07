@@ -38,20 +38,25 @@
                     </x-nav-link>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#sidebarApps" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="sidebarApps">
+                    <a class="nav-link menu-link" href="#sidebarApps" data-bs-toggle="collapse">
                         <i class="ri-apps-2-line"></i> <span>Quản lý</span>
                     </a>
                     <div class="menu-dropdown collapse show" id="sidebarApps">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{route('rooms')}}" class="nav-link collapsed lh-1">
+                                <x-nav-link wire:navigate href="{{route('rooms')}}" :active="request()->routeIs('rooms')">
                                     <i class="ri-tv-fill"></i><span>Cinema Room</span>
-                                </a>
+                                </x-nav-link>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route('films')}}" class="nav-link collapsed lh-1">
+                                <x-nav-link wire:navigate href="{{route('films')}}" :active="request()->routeIs('films')">
                                     <i class="bx bx-film"></i><span>Films</span>
-                                </a>
+                                </x-nav-link>
+                            </li>
+                            <li class="nav-item">
+                                <x-nav-link wire:navigate href="{{route('screenings')}}" :active="request()->routeIs('screenings')">
+                                    <i class="bx bx-film"></i><span>Screenings</span>
+                                </x-nav-link>
                             </li>
                         </ul>
                     </div>

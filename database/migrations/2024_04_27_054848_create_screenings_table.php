@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('screenings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('film_id')->constrained()->cascadeOnDelete();
+            $table->string('room_number');
             $table->json('seats');
             $table->timestamp('start_time');
             $table->timestamp('end_time');
