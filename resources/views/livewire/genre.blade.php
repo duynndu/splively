@@ -4,12 +4,12 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Films List</h4>
+                    <h4 class="mb-sm-0">Genres List</h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Films</a></li>
-                            <li class="breadcrumb-item active">Films List</li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Genres</a></li>
+                            <li class="breadcrumb-item active">Genres List</li>
                         </ol>
                     </div>
 
@@ -23,12 +23,12 @@
                 <div class="card" id="ticketsList">
                     <div class="card-header border-0">
                         <div class="d-flex align-items-center">
-                            <h5 class="card-title mb-0 flex-grow-1">Films</h5>
+                            <h5 class="card-title mb-0 flex-grow-1">Genres</h5>
                             <div class="flex-shrink-0">
                                 <div class="d-flex flex-wrap gap-2">
                                     <button wire:click="showModalInsert()"  class="btn btn-danger add-btn" >
                                             <i class="ri-add-line align-bottom me-1"></i>
-                                        Create Film
+                                        Create Genre
                                     </button>
                                     
                                     <button class="btn btn-soft-danger" id="remove-actions" onclick="deleteMultiple()">
@@ -77,17 +77,12 @@
                                         </div>
                                     </th>
                                     <x-table.heading :sortBy="'id'" :direction="$sortDirection">ID</x-table.heading>
-                                    <th>Title</th>
-                                    <th>Description</th>
-                                    <x-table.heading :sortBy="'duration'" :direction="$sortDirection">Duration</x-table.heading>
-                                    <x-table.heading :sortBy="'release_date'" :direction="$sortDirection">Release_date</x-table.heading>
-                                    <th>Image</th>
-                                    <th>Trailer</th>
+                                    <th>Name</th>
                                     <th >Action</th>
                                 </tr>
                                 </thead>
                                 <tbody class="list form-check-all" id="ticket-list-data">
-                                @foreach($films as $data)
+                                @foreach($genres as $data)
                                     <tr wire:key="{{$data->id}}">
                                         <th>
                                             <div class="form-check">
@@ -96,12 +91,7 @@
                                             </div>
                                         </th>
                                         <td>{{$data->id}}</td>
-                                        <td>{{$data->title}}</td>
-                                        <td>{{$data->description}}</td>
-                                        <td>{{$data->duration}} phút</td>
-                                        <td>{{$data->release_date}}</td>
-                                        <td><img width="100px" src="{{$data->images['cover']}}" alt=""> </td>
-                                        <td>{{$data->title}}</td>
+                                        <td>{{$data->name}}</td>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
@@ -136,7 +126,7 @@
                                 @endforeach
                                 </tbody>
                             </table>
-                            <div @class(['noresult', 'd-none' => $films->count()])>
+                            <div @class(['noresult', 'd-none' => $genres->count()])>
                                 <div class="text-center">
                                     <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop"
                                                colors="primary:#121331,secondary:#08a88a"
@@ -158,9 +148,9 @@
                                         <option value="25">25</option>
                                     </select>
                                 </div>
-                                {{$films->links() }}
+                                {{$genres->links() }}
                             </div>
-                            <div wire:click="getFilmSelected()" class="btn btn-primary">check</div>
+                            <div wire:click="getGenreSelected()" class="btn btn-primary">check</div>
                         </div>
 
                         @if($deleting || $deletingSelected)
@@ -184,7 +174,7 @@
                                                     </button>
                                                     <button wire:click="submitForm()" class="btn btn-danger" id="delete-record">Yes, Delete It
                                                     </button>
-                                                    <div wire:click="getFilmSelected()" class="btn btn-primary">check</div>
+                                                    <div wire:click="getGenreSelected()" class="btn btn-primary">check</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -215,82 +205,13 @@
                                 <div class="row g-3">
                                     <div class="col-lg-12">
                                         <div class="mb-3">
-                                            <label for="name" class="form-label">Film name</label>
+                                            <label for="name" class="form-label">Genre name</label>
                                             <input type="text" id="name" class="form-control"
                                                 wire:model="name">
                                             <div class="text-danger">
                                                 @error('name') {{$message}} @enderror
                                             </div>
                                         </div>
-                                        <div class="mb-3">
-                                            <label for="title" class="form-label">Film title</label>
-                                            <input type="text" id="title" class="form-control"
-                                                wire:model="title">
-                                            <div class="text-danger">
-                                                @error('title') {{$message}} @enderror
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="description" class="form-label">Film description</label>
-                                            <input type="text" id="description" class="form-control"
-                                            wire:model="description">
-                                            <div class="text-danger">
-                                                @error('description') {{$message}} @enderror
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="duration" class="form-label">Film duration</label>
-                                            <input type="text" id="duration" class="form-control"
-                                                wire:model="duration">
-                                            <div class="text-danger">
-                                                @error('duration') {{$message}} @enderror
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="release_date" class="form-label">Release date</label>
-                                            <input type="date" id="release_date" class="form-control"
-                                                wire:model="release_date">
-                                            <div class="text-danger">
-                                                @error('release_date') {{$message}} @enderror
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="image" class="form-label">Ảnh bìa</label>
-                                            <input type="file" id="images" class="form-control"
-                                                wire:model="images.cover">
-                                            @if ($adding)
-                                                <div class="text-danger">
-                                                    @error('images.cover') {{$message}} @enderror
-                                                </div>
-                                            @endif
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="images" class="form-label">Images</label>
-                                            <input type="file" id="images" class="form-control"
-                                                wire:model="images.gallery" multiple>
-                                            @if ($adding)
-                                                <div class="text-danger">
-                                                    @error('images.gallery') {{$message}} @enderror
-                                                </div>
-                                            @endif
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="trailer" class="form-label">Trailer</label>
-                                            <input type="text" id="trailer" class="form-control"
-                                                wire:model="trailer">
-                                            <div class="text-danger">
-                                                @error('trailer') {{$message}} @enderror
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="trailer" class="form-label">Genre</label>
-                                            <input type="text" id="genre" class="form-control"
-                                                wire:model="genre">
-                                            <div class="text-danger">
-                                                @error('genre') {{$message}} @enderror
-                                            </div>
-                                        </div>
-                                        
                                     </div>
                                 </div>
                             </div>
@@ -299,8 +220,8 @@
                                     <button wire:click="closeModal()" type="button" class="btn btn-light"
                                             data-bs-dismiss="modal">Close
                                     </button>
-                                    <div wire:click="checkFilm()" class="btn btn-primary">check</div>
-                                    <button class="btn btn-success" id="add-btn">{{$editting ? 'Update Film' : 'Add Film'}}</button>
+                                    <div wire:click="checkGenre()" class="btn btn-primary">Check</div>
+                                    <button class="btn btn-success" id="add-btn">{{$editting ? 'Update Genre' : 'Add Genre'}}</button>
                                 </div>
                             </div>
                         </form>

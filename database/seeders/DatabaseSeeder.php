@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+
+use App\Livewire\Genres;
 use App\Models\Film;
 use App\Models\Room;
 use App\Models\User;
@@ -23,6 +25,7 @@ class DatabaseSeeder extends Seeder
             'password'=> bcrypt('11111111'),
             'role' => 'admin'
         ]);
+        Genres::factory(10)->create();
         Room::factory(10)->create();
         Film::factory(10)->create();
     }

@@ -23,4 +23,8 @@ class Film extends Model
         }'
     ];
     use HasFactory;
+    public function scopeSearch($query, $search): void
+    {
+        $query->where('title', 'like', "%{$search}%");
+    }
 }
