@@ -30,7 +30,7 @@ Route::middleware(['auth', 'verified', 'check-role:admin'])->group(function () {
         Route::get('', Dashboard::class)->name('dashboard');
         Route::get('rooms', Rooms::class)->name('rooms');
         Route::get('films', Films::class)->name('films');
-        Route::get('genres', Genres::class)->name('films');
+        Route::get('genres', Genres::class)->name('genres');
         Route::get('screenings', Screenings::class)->name('screenings');
     });
 });

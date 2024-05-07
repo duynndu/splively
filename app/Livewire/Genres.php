@@ -3,11 +3,12 @@
 namespace App\Livewire;
 
 use App\Models\Genre;
-use Illuminate\Support\Facades\File;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
+use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\File;
 
 class Genres extends Component
 {
@@ -19,7 +20,6 @@ class Genres extends Component
     public Genre|null $genre;
     #[Validate('required')]
     public string $name = '';
-    public array $seats;
 
     public bool $deleting = false;
     public bool $deletingSelected = false;
@@ -27,7 +27,6 @@ class Genres extends Component
     public bool $adding = false;
 
     public bool $selectAll = false;
-    public array $seatSelected = [];
     public array $genreSelected = [];
 
     public string $sortField = 'id';
@@ -41,7 +40,7 @@ class Genres extends Component
 
     public function mount()
     {
-        $this->seatSelected = [];
+       
     }
 
     public function setDateRange($dateRange)
@@ -81,22 +80,13 @@ class Genres extends Component
         $this->editing = true;
         $this->genre = Genre::find($genre_id);
         $this->name = $this->genre->name;
-        $this->seats = json_decode(File::get('data/seats.json'), true);
-        foreach ($this->genre->seats as $row) {
-            foreach ($row as $key => $seat) {
-                if ($seat['error']) {
-                    $this->seatSelected[] = $key;
-                }
-            }
-        }
+        
     }
 
-    public function showModalAdd()
+    public function showModalInsert()
     {
         $this->closeModal();
         $this->adding = true;
-        $this->name = '';
-        $this->seats = json_decode(File::get('data/seats.json'), true);
     }
 
     public function closeModal()
@@ -106,7 +96,6 @@ class Genres extends Component
         $this->deleting = false;
         $this->deletingSelected = false;
         $this->genre = null;
-        $this->seatSelected = [];
         $this->genreSelected = [];
     }
 
@@ -131,25 +120,19 @@ class Genres extends Component
     public function addGenre()
     {
         $this->validate();
-        foreach ($this->seatSelected as $seat) {
-            $this->seats[explode('_', $seat)[0]][$seat]['error'] = true;
-        }
 
         Genre::create([
             'name' => $this->name,
-            'seats' => $this->seats
+            'slug' => Str::slug($this->name),
         ]);
     }
 
     public function updateGenre()
     {
-
-        foreach ($this->seatSelected as $seat) {
-            $this->seats[explode('_', $seat)[0]][$seat]['error'] = true;
-        }
+        $this->validate();
         Genre::where('id', $this->genre->id)->update([
             'name' => $this->name,
-            'seats' => $this->seats
+            'slug' => Str::slug($this->name),
         ]);
     }
 
@@ -175,11 +158,6 @@ class Genres extends Component
         }
     }
 
-    // debug fn
-    public function getSeatSelected()
-    {
-//        dd($this->seatSelected);
-    }
 
     public function getGenreSelected()
     {

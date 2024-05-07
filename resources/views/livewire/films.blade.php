@@ -200,7 +200,7 @@
             <!--end col-->
         </div>
         <!--end row-->
-        @if ($editting || $adding)
+        @if ($editing || $adding)
             <div class="modal fade zoomIn show" style="display: block" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-fullscreen">
                     <div class="modal-content border-0">
@@ -284,8 +284,13 @@
                                         </div>
                                         <div class="mb-3">
                                             <label for="trailer" class="form-label">Genre</label>
-                                            <input type="text" id="genre" class="form-control"
-                                                wire:model="genre">
+                                            <select class="form-select" id="genre" wire:model="genre">
+                                                @foreach ($genres as $genre)
+                                                    <option>{{$genre->name}}</option>
+                                                @endforeach
+                                              </select>
+                                            {{-- <input type="text" id="genre" class="form-control"
+                                                wire:model="genre"> --}}
                                             <div class="text-danger">
                                                 @error('genre') {{$message}} @enderror
                                             </div>
@@ -300,7 +305,7 @@
                                             data-bs-dismiss="modal">Close
                                     </button>
                                     <div wire:click="checkFilm()" class="btn btn-primary">check</div>
-                                    <button class="btn btn-success" id="add-btn">{{$editting ? 'Update Film' : 'Add Film'}}</button>
+                                    <button class="btn btn-success" id="add-btn">{{$editing ? 'Update Film' : 'Add Film'}}</button>
                                 </div>
                             </div>
                         </form>

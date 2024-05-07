@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Genre;
 
 
 class Films extends Component
@@ -35,7 +36,7 @@ class Films extends Component
     public $release_date = " ";
     public $file = [];
     public $showModal = false;
-    public $editting = false;
+    public $editing = false;
     public $adding = false;
     public $deleting = false;
     public $deletingSelected = false;
@@ -53,15 +54,16 @@ class Films extends Component
     }
     public function render()
     {
-        // dd($this->getFilmPaginate());
+        // dd(Genre::all());
         return view('livewire.films', [
-            'films' => $this->getFilmPaginate()
+            'films' => $this->getFilmPaginate(),
+            'genres'=> Genre::all()
         ]);
     }
     public function closeModal()
     {
         $this->adding = false;
-        $this->editting = false;
+        $this->editing = false;
         $this->deleting = false;
         $this->deletingSelected = false;
         $this->filmSelected = [];
@@ -70,7 +72,7 @@ class Films extends Component
     public function submitForm()
     {
         // dd(1);
-        if ($this->editting) {
+        if ($this->editing) {
             $this->updateFilm();
         }
         if ($this->adding) {
@@ -122,7 +124,7 @@ class Films extends Component
     {
         // dd($this->showModalEdit);
         $this->closeModal();
-        $this->editting = true;
+        $this->editing = true;
         $this->film = Film::find($id_film);
         $this->name = $this->film->name;
         $this->title = $this->film->title;

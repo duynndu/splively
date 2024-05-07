@@ -86,7 +86,7 @@
                                     <tr wire:key="{{$data->id}}">
                                         <th>
                                             <div class="form-check">
-                                                <input wire:model="filmSelected" class="form-check-input selectedItem"
+                                                <input wire:model="genreSelected" class="form-check-input selectedItem"
                                                 type="checkbox" value="{{$data->id}}">
                                             </div>
                                         </th>
@@ -190,7 +190,7 @@
             <!--end col-->
         </div>
         <!--end row-->
-        @if ($editting || $adding)
+        @if ($editing || $adding)
             <div class="modal fade zoomIn show" style="display: block" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-fullscreen">
                     <div class="modal-content border-0">
@@ -221,7 +221,7 @@
                                             data-bs-dismiss="modal">Close
                                     </button>
                                     <div wire:click="checkGenre()" class="btn btn-primary">Check</div>
-                                    <button class="btn btn-success" id="add-btn">{{$editting ? 'Update Genre' : 'Add Genre'}}</button>
+                                    <button class="btn btn-success" id="add-btn">{{$editing ? 'Update Genre' : 'Add Genre'}}</button>
                                 </div>
                             </div>
                         </form>

@@ -49,6 +49,11 @@
                                 </x-nav-link>
                             </li>
                             <li class="nav-item">
+                                <x-nav-link wire:navigate href="{{route('genres')}}" :active="request()->routeIs('genres')">
+                                    <i class="ri-tv-fill"></i><span>Genres</span>
+                                </x-nav-link>
+                            </li>
+                            <li class="nav-item">
                                 <x-nav-link wire:navigate href="{{route('films')}}" :active="request()->routeIs('films')">
                                     <i class="bx bx-film"></i><span>Films</span>
                                 </x-nav-link>
