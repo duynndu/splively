@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Film;
+use App\Models\Genre;
 use App\Models\Room;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -24,6 +25,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin'
         ]);
         Room::factory(10)->create();
+        Genre::factory(10)->create();
         Film::factory(10)->create();
     }
 }
