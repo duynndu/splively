@@ -50,6 +50,7 @@ class Screenings extends Component
     {
         $this->films = Film::all();
         $this->rooms = Room::all();
+
     }
 
     public function setDateRange($dateRange)
@@ -82,7 +83,24 @@ class Screenings extends Component
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
     }
+    public function updated($property, $value)
+    {
+        switch ($property) {
+            case 'room_number':{
+                $this->seats =Room::where('room_number', $value)->first()->seats;
+                $this->seatSelected = [];
+                foreach ($this->seats as $row) {
+                    foreach ($row as $key => $seat) {
+                        if ($seat['error']) {
+                            $this->seatSelected[] = $key;
+                        }
+                    }
+                }
 
+                break;
+            }
+        }
+    }
     public function showModalEdit($screening_id)
     {
         $this->closeModal();
@@ -111,6 +129,8 @@ class Screenings extends Component
         $this->deletingSelected = false;
         $this->screening = null;
         $this->room_number = '';
+        $this->seats = [];
+        $this->seatSelected = [];
         $this->screeningSelected = [];
     }
 
@@ -177,7 +197,7 @@ class Screenings extends Component
     // debug fn
     public function debug()
     {
-        dd($this->room_number,$this->seats);
+        dd($this->seatSelected);
     }
 
     public function updatedSelectAll($selectAll): void
@@ -188,12 +208,6 @@ class Screenings extends Component
         } else {
             $this->screeningSelected = [];
         }
-    }
-
-    public function setSeats($room_number): void
-    {
-        $this->room_number = $room_number;
-        $this->seats =Room::where('room_number', $room_number)->first()->seats;
     }
 
 

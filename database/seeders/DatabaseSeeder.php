@@ -7,6 +7,7 @@ use App\Livewire\Genres;
 use App\Models\Film;
 use App\Models\Genre;
 use App\Models\Room;
+use App\Models\Screening;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -29,5 +30,6 @@ class DatabaseSeeder extends Seeder
         Room::factory(10)->create();
         Genre::factory(10)->create();
         Film::factory(10)->create();
+        Screening::factory(10)->create();
     }
 }

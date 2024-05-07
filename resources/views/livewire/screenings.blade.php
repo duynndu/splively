@@ -81,8 +81,10 @@
                                     {{--                                    để dùng x-table.heading phải định nghĩa hàm tren ở trong class component--}}
                                     {{--                                    :direction dùng  để truyền vào trạng thái sap xep asc hoặc desc--}}
                                     <x-table.heading :sortBy="'id'" :direction="$sortDirection">ID</x-table.heading>
-                                    <x-table.heading :sortBy="'room_number'" :direction="$sortDirection">Room number</x-table.heading>
-                                    <x-table.heading :sortBy="'created_at'" :direction="$sortDirection">Created at</x-table.heading>
+                                    <x-table.heading :sortBy="'room_number'" :direction="$sortDirection">Room number
+                                    </x-table.heading>
+                                    <x-table.heading :sortBy="'created_at'" :direction="$sortDirection">Created at
+                                    </x-table.heading>
 
                                     <th>Action</th>
                                 </tr>
@@ -92,7 +94,7 @@
                                     <tr wire:key="{{$data->id}}">
                                         <th>
                                             <div class="form-check">
-                                                <input wire:model="roomSelected" class="form-check-input selectedItem"
+                                                <input wire:model="screeningSelected" class="form-check-input selectedItem"
                                                        type="checkbox" value="{{$data->id}}">
                                             </div>
                                         </th>
@@ -189,17 +191,58 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Room number</label>
-                                            <select x-on:change="$wire.setSeats($event.target.value)" class="form-select">
+                                            <select wire:model.live="room_number"
+                                                    class="form-select">
                                                 <option value="">Select Room number</option>
                                                 @foreach($rooms as $room)
-                                                    <option value="{{$room->room_number}}">{{$room->room_number}}</option>
+                                                    <option
+                                                        value="{{$room->room_number}}">{{$room->room_number}}</option>
                                                 @endforeach
                                             </select>
+                                            {{$room_number}}
                                             <div class="text-danger">
                                                 @error('room_number') {{$message}} @enderror
                                             </div>
                                         </div>
-                                        <x-seats :seats="$seats"></x-seats>
+                                        @if($seats)
+                                            <div class="mb-3">
+                                                <div class="st_seat_full_container bg-dark">
+                                                    <div
+                                                        class="st_seat_lay_economy_wrapper st_seat_lay_economy_wrapperexicutive float_left">
+                                                        @foreach($seats as $row=>$seatsRow)
+                                                            <div
+                                                                 class="st_seat_lay_row d-flex justify-content-center gap-5">
+                                                                @php
+
+                                                                    @endphp
+                                                                @foreach(splitArray5_13_5($seatsRow) as $indexGroup=>$seatGroup)
+                                                                    <ul
+                                                                        class="{{$indexGroup === 0 ? '' : 'st_eco_second_row'}}">
+                                                                        @if($indexGroup === 0)
+                                                                            <li class="st_seat_heading_row">{{$row}}</li>
+                                                                        @endif
+                                                                        @foreach($seatGroup as $seatNumber=>$seat)
+                                                                            <li>
+                                                                                <input id="{{$seatNumber}}"
+                                                                                       type="checkbox"
+                                                                                       value="{{$seatNumber}}"
+                                                                                       wire:model="seatSelected">
+                                                                                <label for="{{$seatNumber}}"
+                                                                                       seat_number="{{explode('_',$seatNumber)[1]}}"
+                                                                                       class="seat_number"></label>
+                                                                            </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                @endforeach
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <div class="text-danger">
+                                                    @error('seats') {{$message}} @enderror
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -240,7 +283,7 @@
                                     <button wire:click="submitForm()" class="btn btn-danger"
                                             id="delete-record">Yes, Delete It
                                     </button>
-                                    <div wire:click="getRoomSelected()" class="btn btn-primary">check
+                                    <div wire:click="debug()" class="btn btn-primary">check
                                     </div>
                                 </div>
                             </div>
