@@ -83,6 +83,7 @@
                                     <x-table.heading :sortBy="'release_date'" :direction="$sortDirection">Release_date</x-table.heading>
                                     <th>Image</th>
                                     <th>Trailer</th>
+                                    <th>Genre</th>
                                     <th >Action</th>
                                 </tr>
                                 </thead>
@@ -101,7 +102,8 @@
                                         <td>{{$data->duration}} phút</td>
                                         <td>{{$data->release_date}}</td>
                                         <td><img width="100px" src="{{$data->images['cover']}}" alt=""> </td>
-                                        <td>{{$data->title}}</td>
+                                        <td>{{$data->trailer}}</td>
+                                        <td>{{$data->genre_name}}</td>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
@@ -285,8 +287,9 @@
                                         <div class="mb-3">
                                             <label for="trailer" class="form-label">Genre</label>
                                             <select class="form-select" id="genre" wire:model="genre">
+                                                <option value="">Select genre</option>
                                                 @foreach ($genres as $genre)
-                                                    <option>{{$genre->name}}</option>
+                                                    <option value="{{$genre->id}}">{{$genre->name}}</option>
                                                 @endforeach
                                               </select>
                                             {{-- <input type="text" id="genre" class="form-control"

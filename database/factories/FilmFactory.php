@@ -18,6 +18,7 @@ class FilmFactory extends Factory
     {
         return [
             'name' => 'phim vui vẻ',
+            'slug' => $this->faker->slug(),
             'title' => $this->faker->sentence,
             'description' => $this->faker->sentence,
             'duration' => $this->faker->numberBetween(60, 180), 

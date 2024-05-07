@@ -110,6 +110,8 @@ class Films extends Component
                     $query->whereBetween('created_at', convertDateRange($this->dateRange));
                 }
             })
+            ->join('genres', 'films.genre_id', '=', 'genres.id')
+            ->select('films.*', 'genres.name as genre_name')
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
     }
@@ -130,7 +132,7 @@ class Films extends Component
         $this->title = $this->film->title;
         $this->duration = $this->film->duration;
         $this->trailer = $this->film->trailer;
-        $this->genre = $this->film->genre;
+        $this->genre = $this->film->genre_id;
         $this->description = $this->film->description;
         $this->release_date = $this->film->release_date;
     }
@@ -138,7 +140,7 @@ class Films extends Component
    
     public function checkFilm()
     {
-        dd(Str::slug($this->title));
+        dd(($this->genre));
     }
 
     public function insertFilm()
@@ -166,13 +168,14 @@ class Films extends Component
             }
         }
         $film->name = $this->name;
+        $film->slug = Str::slug($this->name);
         $film->title = $this->title;
         $film->description = $this->description;
         $film->release_date = $this->release_date;
         $film->trailer = $this->trailer;
         $film->images = $this->file;
         $film->duration = $this->duration;
-        $film->genre = $this->genre;
+        $film->genre_id = $this->genre;
         $film->save();
     }
 
@@ -230,12 +233,13 @@ class Films extends Component
                     ]);
                 })->update([
                     'name' => $this->name,
+                    'slug' => Str::slug($this->name),
                     'title' => $this->title,
                     'description'=>$this->description,
                     'release_date'=>$this->release_date,
                     'trailer'=>$this->trailer,
                     'duration'=>$this->duration,
-                    'genre'=>$this->genre
+                    'genre_id'=>$this->genre
                 ]);
     }
     public function updatedSelectAll($selectAll): void
