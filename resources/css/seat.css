@@ -116,7 +116,7 @@
     line-height: 25px;
     margin: 0.2em 0.56em 0 0;
     padding: 0;
-    color: rgba(255, 255, 255, 0.38);
+    color: rgb(255, 255, 255);
     vertical-align: top;
     width: 40px;
     border-radius: 5px;
@@ -149,12 +149,24 @@
     content: attr(seat_number);
 }
 :root{
-    --color-seat-disabled: #4d4f5c;
+    --color-seat-error: #ff0000;
+    --color-seat-booked: #ffec00;
 }
-.st_seat_lay_row input[type="checkbox"]:checked + label:after,
-.st_seat_lay_row input[type="checkbox"]:checked + label:before{
-    background: var(--color-seat-disabled);
-    border: 1px solid var(--color-seat-disabled);
+
+:root{
+    --color-seat-error: #ff0000;
+    --color-seat-booked: #ffec00;
+}
+.error input[type="checkbox"]:checked + label:after,
+.error input[type="checkbox"]:checked + label:before{
+    background: var(--color-seat-error);
+    border: 1px solid var(--color-seat-error);
+}
+
+.booked input[type="checkbox"] + label:after,
+.booked input[type="checkbox"] + label:before{
+    background: var(--color-seat-booked);
+    border: 1px solid var(--color-seat-booked);
 }
 
 

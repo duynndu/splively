@@ -92,7 +92,7 @@
                                     <tr wire:key="{{$data->id}}">
                                         <th>
                                             <div class="form-check">
-                                                <input wire:model="roomSelected" class="form-check-input selectedItem"
+                                                <input wire:model="screeningSelected" class="form-check-input selectedItem"
                                                        type="checkbox" value="{{$data->id}}">
                                             </div>
                                         </th>
@@ -196,7 +196,7 @@
                                                                         <li class="st_seat_heading_row">{{$row}}</li>
                                                                     @endif
                                                                     @foreach($seatGroup as $seatNumber=>$seat)
-                                                                        <li>
+                                                                        <li class="error">
                                                                             <input id="{{$seatNumber}}" type="checkbox"
                                                                                    value="{{$seatNumber}}"
                                                                                    wire:model="seatSelected">

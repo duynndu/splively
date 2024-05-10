@@ -73,17 +73,14 @@
                                                    type="checkbox">
                                         </div>
                                     </th>
-                                    {{--                                    public function sortBy($sortField): void--}}
-                                    {{--                                    {--}}
-                                    {{--                                        $this->sortField = $sortField;--}}
-                                    {{--                                        $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';--}}
-                                    {{--                                    }--}}
-                                    {{--                                    để dùng x-table.heading phải định nghĩa hàm tren ở trong class component--}}
-                                    {{--                                    :direction dùng  để truyền vào trạng thái sap xep asc hoặc desc--}}
                                     <x-table.heading :sortBy="'id'" :direction="$sortDirection">ID</x-table.heading>
                                     <x-table.heading :sortBy="'room_number'" :direction="$sortDirection">Room number
                                     </x-table.heading>
-                                    <x-table.heading :sortBy="'created_at'" :direction="$sortDirection">Created at
+                                    <x-table.heading :sortBy="'film_id'" :direction="$sortDirection">FilmID
+                                    </x-table.heading>
+                                    <x-table.heading :sortBy="'start_time'" :direction="$sortDirection">Created at
+                                    </x-table.heading>
+                                    <x-table.heading :sortBy="'end_time'" :direction="$sortDirection">Created at
                                     </x-table.heading>
 
                                     <th>Action</th>
@@ -99,8 +96,10 @@
                                             </div>
                                         </th>
                                         <td>{{$data->id}}</td>
+                                        <td>{{$data->room_number}}</td>
                                         <td>{{$data->film_id}}</td>
-                                        <td>{{$data->created_at}}</td>
+                                        <td>{{$data->start_time}}</td>
+                                        <td>{{$data->end_time}}</td>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-soft-secondary btn-sm dropdown" type="button"
@@ -190,13 +189,26 @@
                                             </div>
                                         </div>
                                         <div class="mb-3">
+                                            <label class="form-label">Start time</label>
+                                            <input wire:model.live="start_time" class="form-control" type="datetime-local">
+                                            <div class="text-danger">
+                                                @error('start_time') {{$message}} @enderror
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">End time</label>
+                                            <input wire:model.live="end_time" class="form-control" type="datetime-local">
+                                            <div class="text-danger">
+                                                @error('end_time') {{$message}} @enderror
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
                                             <label class="form-label">Room number</label>
                                             <select wire:model.live="room_number"
                                                     class="form-select">
                                                 <option value="">Select Room number</option>
                                                 @foreach($rooms as $room)
-                                                    <option
-                                                        value="{{$room->room_number}}">{{$room->room_number}}</option>
+                                                    <option value="{{$room->room_number}}">{{$room->room_number}}</option>
                                                 @endforeach
                                             </select>
                                             {{$room_number}}
@@ -210,8 +222,7 @@
                                                     <div
                                                         class="st_seat_lay_economy_wrapper st_seat_lay_economy_wrapperexicutive float_left">
                                                         @foreach($seats as $row=>$seatsRow)
-                                                            <div
-                                                                 class="st_seat_lay_row d-flex justify-content-center gap-5">
+                                                            <div class="st_seat_lay_row d-flex justify-content-center gap-5">
                                                                 @php
 
                                                                     @endphp
@@ -222,14 +233,19 @@
                                                                             <li class="st_seat_heading_row">{{$row}}</li>
                                                                         @endif
                                                                         @foreach($seatGroup as $seatNumber=>$seat)
-                                                                            <li>
-                                                                                <input id="{{$seatNumber}}"
+                                                                            <li @class([
+                                                                                'booked' => $seat['status'] === 'booked',
+                                                                                'error' => $seat['status'] === 'error',
+                                                                            ])>
+                                                                                <input @checked(in_array($seatNumber,$seatSelected)) id="{{$seatNumber}}"
                                                                                        type="checkbox"
                                                                                        value="{{$seatNumber}}"
                                                                                        wire:model="seatSelected">
-                                                                                <label for="{{$seatNumber}}"
-                                                                                       seat_number="{{explode('_',$seatNumber)[1]}}"
-                                                                                       class="seat_number"></label>
+                                                                                @unless($seat['status'] === 'error')
+                                                                                    <label for="{{$seatNumber}}"
+                                                                                           seat_number="{{explode('_',$seatNumber)[1]}}"
+                                                                                           class="seat_number"></label>
+                                                                                @endunless
                                                                             </li>
                                                                         @endforeach
                                                                     </ul>
@@ -309,4 +325,3 @@
     </div>
 </div>
 <!-- container-fluid -->
-

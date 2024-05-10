@@ -84,7 +84,7 @@ class Rooms extends Component
         $this->seats = json_decode(File::get('data/seats.json'), true);
         foreach ($this->room->seats as $row) {
             foreach ($row as $key => $seat) {
-                if ($seat['error']) {
+                if ($seat['status'] === 'error') {
                     $this->seatSelected[] = $key;
                 }
             }
@@ -145,7 +145,7 @@ class Rooms extends Component
     {
 
         foreach ($this->seatSelected as $seat) {
-            $this->seats[explode('_', $seat)[0]][$seat]['error'] = true;
+            $this->seats[explode('_', $seat)[0]][$seat]['status'] = 'error';
         }
         Room::where('id', $this->room->id)->update([
             'room_number' => $this->room_number,

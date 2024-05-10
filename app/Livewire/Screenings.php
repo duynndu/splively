@@ -17,11 +17,16 @@ class Screenings extends Component
     public int $perPage = 2;
     public string $search = '';
     public $dateRange;
+    public $datetimeRanger = '';
     public Screening|null $screening;
     #[Validate('required')]
     public $film_id = '';
     #[Validate('required')]
     public $room_number = '';
+    #[Validate('required')]
+    public $start_time = '';
+    #[Validate('required')]
+    public $end_time = '';
     #[Validate('required')]
     public array $seats;
 
@@ -91,12 +96,23 @@ class Screenings extends Component
                 $this->seatSelected = [];
                 foreach ($this->seats as $row) {
                     foreach ($row as $key => $seat) {
-                        if ($seat['error']) {
+                        if ($seat['status'] === 'error') {
                             $this->seatSelected[] = $key;
                         }
                     }
                 }
-
+                break;
+            }
+            case 'datetimeRanger':{
+//                dd($value);
+                break;
+            }
+            case 'start_time':{
+                $this->start_time = str_replace('T', ' ', $value);
+                break;
+            }
+            case 'end_time':{
+                $this->end_time = str_replace('T', ' ', $value);
                 break;
             }
         }
@@ -106,9 +122,13 @@ class Screenings extends Component
         $this->closeModal();
         $this->editing = true;
         $this->screening = Screening::find($screening_id);
+        $this->film_id = $this->screening->film_id;
+        $this->room_number = $this->screening->room_number;
+        $this->start_time = $this->screening->start_time;
+        $this->end_time = $this->screening->end_time;
         foreach ($this->screening->seats as $row) {
             foreach ($row as $key => $seat) {
-                if ($seat['error']) {
+                if ($seat['status'] === 'error') {
                     $this->seatSelected[] = $key;
                 }
             }
@@ -155,11 +175,11 @@ class Screenings extends Component
     public function addScreening()
     {
         $this->validate();
-
-        dd($this->film_id, $this->room_number, $this->seats);
-
+//        dd($this->film_id, $this->room_number, $this->seats,$this->start_time, $this->end_time);
         Screening::create([
             'film_id' => $this->film_id,
+            'start_time' => $this->start_time,
+            'end_time' => $this->end_time,
             'room_number' => $this->room_number,
             'seats' => $this->seats
         ]);
@@ -197,7 +217,7 @@ class Screenings extends Component
     // debug fn
     public function debug()
     {
-        dd($this->seatSelected);
+                dd($this->film_id, $this->room_number, $this->seats,$this->start_time, $this->end_time);
     }
 
     public function updatedSelectAll($selectAll): void
